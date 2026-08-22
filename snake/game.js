@@ -2,6 +2,7 @@ const canvas = document.querySelector('#game')
 const ctx = canvas.getContext('2d')
 
 
+
 const snakeHeadImg = new Image()
 snakeHeadImg.src = "snake-head.jpg"
 const gameOverImg = new Image()
@@ -12,10 +13,12 @@ gameOverImg.onload = function () {
 }
 
 
+
 let imgReady = false
 snakeHeadImg.onload = function(){
   imgReady = true
 }
+
 
 
 const dpr = window.devicePixelRatio || 1
@@ -28,7 +31,8 @@ canvas.style.height = logicH + 'px'
 ctx.scale(dpr, dpr)
 
 
-const grid = 25
+
+const grid = 20
 let snake = [
   {x: 60, y:200},
   {x: 40, y:200},
@@ -44,6 +48,7 @@ let deathDelay = 0
 let activeBtn = null
 
 
+
 //========新增 多种食物+昼夜模式========
 const foodArr = [
   { emoji:'🍎', score:1 },
@@ -53,6 +58,7 @@ const foodArr = [
 const propStar = { emoji:'⭐', type:'dayNight' }
 let currentFood = null
 let isDarkMode = false
+
 
 
 
@@ -74,16 +80,20 @@ const restartBtn = {
 }
 
 
+
 function pointInRect(px, py, rect){
   return px >= rect.x && px <= rect.x+rect.w && py >= rect.y && py <= rect.y+rect.h
 }
 
 
+
 function createFood(){
   let newFood
+  const maxCol = Math.floor(logicW / grid)
+  const maxRow = Math.floor(logicH / grid)
   while(true){
-    const x = Math.floor(Math.random()*15)*grid
-    const y = Math.floor(Math.random()*24)*grid
+    const x = Math.floor(Math.random()*maxCol)*grid
+    const y = Math.floor(Math.random()*maxRow)*grid
     newFood = {x,y}
     let isOnSnake = false
     for(let i=0;i<snake.length;i++){
@@ -96,6 +106,7 @@ function createFood(){
     if(!isOnSnake) break
   }
 
+
   const rand = Math.random()
   if(rand < 0.1){
     currentFood = { ...newFood, ...propStar }
@@ -104,6 +115,7 @@ function createFood(){
     currentFood = { ...newFood, ...foodItem }
   }
 }
+
 
 
 
@@ -125,12 +137,14 @@ function resetGame(){
 }
 
 
+
 canvas.addEventListener('touchstart', e=>{
   e.preventDefault()
   const t = e.touches[0]
   const rect = canvas.getBoundingClientRect()
   const logicX = (t.clientX - rect.left)/rect.width * logicW
   const logicY = (t.clientY - rect.top)/rect.height * logicH
+
 
 
   if(!isStart){
@@ -155,6 +169,7 @@ canvas.addEventListener('touchstart', e=>{
 }, { passive: false })
 
 
+
 canvas.addEventListener('touchend',()=>{
   activeBtn = null
 }, { passive: false })
@@ -162,9 +177,11 @@ canvas.addEventListener('touchend',()=>{
 
 
 
+
 let timer = 0
 let speedInterval = 18
 const minSpeed=8
+
 
 
 function snakeMove(){
@@ -211,33 +228,37 @@ function snakeMove(){
 }
 
 
+
 function drawSnake(){
   ctx.imageSmoothingEnabled = false;
+
 
   for(let i=0;i<snake.length;i++){
     const seg = snake[i]
     if(i === 0){
       // ========== 蛇头：用图片 ==========
       if(imgReady){
-        ctx.drawImage(snakeHeadImg, seg.x, seg.y, grid-6, grid-6)
+        ctx.drawImage(snakeHeadImg, seg.x, seg.y, grid-1, grid-1)
       }else{
         // 图片加载失败兜底，还是画绿色方块
         ctx.fillStyle = "#00bb22"
-        ctx.fillRect(seg.x,seg.y,grid-6,grid-6)
+        ctx.fillRect(seg.x,seg.y,grid-1,grid-1)
       }
     }else{
       // ========== 蛇身体：保留原来方块逻辑 ==========
       ctx.fillStyle = "#39cc58"
-      ctx.fillRect(seg.x,seg.y,grid-6,grid-6)
+      ctx.fillRect(seg.x,seg.y,grid-1,grid-1)
     }
   }
 }
+
 
 
 function drawFood(){
   ctx.font = `${grid}px Arial`
   ctx.fillText(currentFood.emoji, currentFood.x, currentFood.y + grid * 0.85)
 }
+
 
 
 
@@ -277,16 +298,20 @@ function drawScore(){
 }
 
 
+
 function drawGameOver(){
   if(!gameOver) return
   if(deathDelay > 0) return
+
 
   // 半透明遮罩
   ctx.fillStyle = "rgba(0,0,0,0.65)"
   ctx.fillRect(0,0,logicW,logicH)
 
+
   ctx.textAlign="center"
   ctx.textBaseline="middle"
+
 
   // 如果图片加载成功，绘制失败图片，否则回退文字
   if(gameOverImgReady){
@@ -303,11 +328,13 @@ function drawGameOver(){
     ctx.fillText("游戏结束", logicW/2, logicH/2 - 60)
   }
 
+
   // 得分文字
   ctx.fillStyle="#ffffff"
   ctx.font="24px sans-serif"
   ctx.fillText(`本局得分：${score}`, logicW/2, logicH/2 -15)
   ctx.fillText(`历史最高：${highScore}`, logicW/2, logicH/2 +20)
+
 
   // 重新开始按钮
   ctx.fillStyle="#4488dd"
@@ -317,6 +344,7 @@ function drawGameOver(){
   ctx.fillText(restartBtn.label, restartBtn.x+restartBtn.w/2, restartBtn.y+restartBtn.h/2)
 }
 
+
 function loop(){
   ctx.clearRect(0,0,logicW,logicH)
   if(isDarkMode){
@@ -325,6 +353,7 @@ function loop(){
     ctx.fillStyle="#f7f7f7"
   }
   ctx.fillRect(0,0,logicW,logicH)
+
 
 
   if(gameOver && deathDelay>0) deathDelay--
@@ -353,6 +382,7 @@ function loop(){
   }
   requestAnimationFrame(loop)
 }
+
 
 
 createFood()
