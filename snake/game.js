@@ -39,6 +39,11 @@ let isStart = false
 let deathDelay = 0
 let activeBtn = null
 
+
+let timer = 0
+let speedInterval = 18
+const minSpeed = 8
+
 // 多种食物+昼夜模式
 const foodArr = [
   { emoji: '🍎', score: 1 },
@@ -107,6 +112,7 @@ function resetGame() {
   dirX = grid
   dirY = 0
   createFood()
+  speedInterval = 18
   isDarkMode = false
   gameOver = false
   score = 0
@@ -170,9 +176,6 @@ document.addEventListener('keydown', function (e) {
   }
 })
 
-let timer = 0
-let speedInterval = 18
-const minSpeed = 8
 
 function snakeMove() {
   if (gameOver) return
