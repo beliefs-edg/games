@@ -17,8 +17,8 @@ const ball = {
   r: 8,        // 半径
   x: 240,
   y: 500,
-  dx: 2,       // x方向速度（正数向右，负数向左）
-  dy: -2     // y方向速度（负数向上）
+  dx: 4,       // x方向速度（正数向右，负数向左）
+  dy: -4     // y方向速度（负数向上）
 }
 
 let bricks = []
@@ -361,16 +361,19 @@ function checkBrickHit(){
 // 抽离点击处理函数
 function handleCanvasClick(e){
   const rect = canvas.getBoundingClientRect()
+  // 真实画布尺寸 / css显示尺寸 = 缩放比例
+  const scaleX = canvas.width / rect.width
+  const scaleY = canvas.height / rect.height
+
   let mx, my
 
-  // 判断是触摸事件还是鼠标click事件
   if(e.changedTouches){
     const t = e.changedTouches[0]
-    mx = t.clientX - rect.left
-    my = t.clientY - rect.top
+    mx = (t.clientX - rect.left) * scaleX
+    my = (t.clientY - rect.top) * scaleY
   }else{
-    mx = e.clientX - rect.left
-    my = e.clientY - rect.top
+    mx = (e.clientX - rect.left) * scaleX
+    my = (e.clientY - rect.top) * scaleY
   }
 
 
@@ -465,9 +468,10 @@ canvas.addEventListener('mousemove', function(e){
   if(page !== "game") return //只有游戏界面才控制挡板
 
   const rect = canvas.getBoundingClientRect()
-  const mouseX = e.clientX - rect.left
-
+  const scaleX = canvas.width / rect.width
+  const mouseX = (e.clientX - rect.left) * scaleX
   paddle.x = mouseX - paddle.w / 2
+
 
   if(paddle.x < 0){
     paddle.x = 0
@@ -481,10 +485,11 @@ canvas.addEventListener('mousemove', function(e){
 canvas.addEventListener('touchmove', function(e){
   e.preventDefault();
   const touch = e.touches[0];
-  // 映射到canvas内部坐标
   const rect = canvas.getBoundingClientRect();
-  const x = touch.clientX - rect.left;
+  const scaleX = canvas.width / rect.width;
+  const x = (touch.clientX - rect.left) * scaleX;
   paddle.x = x - paddle.w / 2;
+
 
   // 限制挡板不跑出屏幕左右
   if(paddle.x < 0) paddle.x = 0;
