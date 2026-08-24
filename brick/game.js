@@ -70,7 +70,7 @@ const levelConfig = [
       {x:30,y:105,w:30,h:20},{x:60,y:105,w:30,h:20},{x:90,y:105,w:30,h:20},{x:120,y:105,w:30,h:20},{x:150,y:105,w:30,h:20},{x:180,y:105,w:30,h:20},{x:210,y:105,w:30,h:20},{x:240,y:105,w:30,h:20},{x:270,y:105,w:30,h:20},{x:300,y:105,w:30,h:20},{x:330,y:105,w:30,h:20},{x:360,y:105,w:30,h:20},{x:390,y:105,w:30,h:20}
     ]
   },
-  //第1关 金字塔
+  //第4关 金字塔
   {
     brickColor:"#69ca1e",
     bricks: [
@@ -80,7 +80,7 @@ const levelConfig = [
       {x:135,y:105,w:30,h:20},{x:165,y:105,w:30,h:20},{x:195,y:105,w:30,h:20},{x:225,y:105,w:30,h:20},{x:255,y:105,w:30,h:20},{x:285,y:105,w:30,h:20},{x:315,y:105,w:30,h:20}
     ]
   },
-  //第2关 空心十字
+  //第5关 空心十字
   {
     brickColor:"#44aaff",
     bricks: [
@@ -91,7 +91,7 @@ const levelConfig = [
       {x:60,y:130,w:30,h:20},{x:90,y:130,w:30,h:20},{x:120,y:130,w:30,h:20},{x:330,y:130,w:30,h:20},{x:360,y:130,w:30,h:20},{x:390,y:130,w:30,h:20}
     ]
   },
-  //第3关 V字形斜阵
+  //第6关 V字形斜阵
   {
     brickColor:"#ff7744",
     bricks: [
@@ -102,7 +102,7 @@ const levelConfig = [
       {x:105,y:130,w:30,h:20},{x:345,y:130,w:30,h:20}
     ]
   },
-  //第4关 棋盘交错
+  //第7关 棋盘交错
   {
     brickColor:"#bb66dd",
     bricks: [
@@ -112,7 +112,7 @@ const levelConfig = [
       {x:105,y:105,w:30,h:20},{x:165,y:105,w:30,h:20},{x:225,y:105,w:30,h:20},{x:285,y:105,w:30,h:20},{x:345,y:105,w:30,h:20}
     ]
   },
-  //第5关 外圈围墙，中间散落
+  //第8关 外圈围墙，中间散落
   {
     brickColor:"#22bbbb",
     bricks: [
@@ -358,11 +358,21 @@ function checkBrickHit(){
 }
 
 
-
-canvas.addEventListener('click', function(e){
+// 抽离点击处理函数
+function handleCanvasClick(e){
   const rect = canvas.getBoundingClientRect()
-  const mx = e.clientX - rect.left
-  const my = e.clientY - rect.top
+  let mx, my
+
+  // 判断是触摸事件还是鼠标click事件
+  if(e.changedTouches){
+    const t = e.changedTouches[0]
+    mx = t.clientX - rect.left
+    my = t.clientY - rect.top
+  }else{
+    mx = e.clientX - rect.left
+    my = e.clientY - rect.top
+  }
+
 
   //主菜单
   if(page === "menu"){
@@ -372,6 +382,7 @@ canvas.addEventListener('click', function(e){
     }
     return
   }
+
 
   //选关页面
   if(page === "select"){
@@ -403,6 +414,7 @@ canvas.addEventListener('click', function(e){
     return
   }
 
+
   //过关弹窗页面
   if(page === "levelPass"){
     if(level < levelConfig.length){
@@ -431,12 +443,22 @@ canvas.addEventListener('click', function(e){
     return
   }
 
+
   //游戏结束页面，点击重新开始，回到选关
   if(page === "gameover"){
     page = "select"
     return
   }
-})
+}
+
+//电脑鼠标点击
+canvas.addEventListener('click', handleCanvasClick)
+
+//手机触摸点击（手指抬起）
+canvas.addEventListener('touchend',function(e){
+  e.preventDefault()
+  handleCanvasClick(e)
+},{passive:false})
 
 
 canvas.addEventListener('mousemove', function(e){
