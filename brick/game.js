@@ -455,6 +455,21 @@ canvas.addEventListener('mousemove', function(e){
   }
 })
 
+// 手机触摸控制
+canvas.addEventListener('touchmove', function(e){
+  e.preventDefault();
+  const touch = e.touches[0];
+  // 映射到canvas内部坐标
+  const rect = canvas.getBoundingClientRect();
+  const x = touch.clientX - rect.left;
+  paddle.x = x - paddle.w / 2;
+
+  // 限制挡板不跑出屏幕左右
+  if(paddle.x < 0) paddle.x = 0;
+  if(paddle.x + paddle.w > canvas.width) paddle.x = canvas.width - paddle.w;
+},{passive:false});
+
+
 function loop(){
   ctx.fillStyle = '#e4d3d3'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
