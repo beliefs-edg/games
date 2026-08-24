@@ -425,8 +425,8 @@ function handleCanvasClick(e){
         level++
         ball.x = canvas.width/2
         ball.y = 500
-        ball.dx = 2
-        ball.dy = -2
+        ball.dx = 4
+        ball.dy = -4
         createBricks()
         currentBrickColor = levelConfig[level -1].brickColor
         levelPassed = false
