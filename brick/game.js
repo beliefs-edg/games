@@ -17,13 +17,15 @@ const ball = {
   r: 8,        // 半径
   x: 240,
   y: 500,
-  dx: 10,       // x方向速度（正数向右，负数向左）
-  dy: -10    // y方向速度（负数向上）
+  dx: 1,       // x方向速度（正数向右，负数向左）
+  dy: -1     // y方向速度（负数向上）
 }
 
 let bricks = []
 
 let level = 1
+
+const ballSpeed = 300 // 像素/秒
 
 const levelConfig = [
   //第1关 三角阵型
@@ -140,11 +142,15 @@ let page = "menu"
 
 
 function moveBall(){
-  if(gameStart){
-    ball.x += ball.dx
-    ball.y += ball.dy
-  }
+  if(!gameStart) return
+  const now = performance.now()
+  const dt = (now - prevMs) / 1000
+  prevMs = now
+
+  ball.x += ball.dx * ballSpeed * dt
+  ball.y += ball.dy * ballSpeed * dt
 }
+
 
 function wallBounce(){
   // 左右墙壁
@@ -300,8 +306,9 @@ function checkGameOver(){
   if(ball.y + ball.r > canvas.height){
     ball.x = canvas.width / 2
     ball.y = 500
-    ball.dx = 2
-    ball.dy = -2
+    ball.dx = 1
+    ball.dy = -1
+    prevMs = performance.now()
     gameOver = true
     gameStart = false
     page = "gameover" //切换游戏结束页
@@ -401,8 +408,9 @@ function handleCanvasClick(e){
         currentBrickColor = levelConfig[level -1].brickColor
         ball.x = canvas.width/2
         ball.y = 500
-        ball.dx = 2
-        ball.dy = -2
+        ball.dx = 1
+        ball.dy = -1
+        prevMs = performance.now()
         levelPassed = false
         gameOver = false
         gameStart = true
@@ -425,8 +433,9 @@ function handleCanvasClick(e){
         level++
         ball.x = canvas.width/2
         ball.y = 500
-        ball.dx = 4
-        ball.dy = -4
+        ball.dx = 1
+        ball.dy = -1
+        prevMs = performance.now()
         createBricks()
         currentBrickColor = levelConfig[level -1].brickColor
         levelPassed = false
